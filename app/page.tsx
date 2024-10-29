@@ -1,101 +1,126 @@
-import Image from "next/image";
+'use client'
+
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import Background from '@/components/backgrouns';
+import ThemeToggle from '@/components/themetoggle';
+import HabitSelection from '@/components/habitselection';
+import CustomHabitInput from '@/components/customhabits';
+import HabitTracking from '@/components/habittrack';
+
+interface Habit {
+  id: string;
+  name: string;
+  color: string;
+}
+
+const initialHabits: Habit[] = [
+  { id: 'exercise', name: 'Exercise', color: 'bg-blue-500' },
+  { id: 'mindfulness', name: 'Mindfulness', color: 'bg-green-500' },
+  { id: 'sleep', name: 'Sleep', color: 'bg-purple-500' },
+  { id: 'reading', name: 'Reading', color: 'bg-yellow-500' },
+  { id: 'hydration', name: 'Hydration', color: 'bg-cyan-500' },
+]
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [habits, setHabits] = useState<Habit[]>(initialHabits)
+  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null)
+  const [progress, setProgress] = useState<Record<string, Record<string, boolean>>>({})
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const storedHabits = JSON.parse(localStorage.getItem('habits') || JSON.stringify(initialHabits))
+    const storedHabit = localStorage.getItem('selectedHabit')
+    const storedProgress = JSON.parse(localStorage.getItem('habitProgress') || '{}')
+    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'dark'
+    
+    setHabits(storedHabits)
+    if (storedHabit) setSelectedHabit(storedHabits.find((h: Habit) => h.id === storedHabit) || null)
+    setProgress(storedProgress)
+    setTheme(storedTheme)
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('habits', JSON.stringify(habits))
+  }, [habits])
+
+  useEffect(() => {
+    if (selectedHabit) {
+      localStorage.setItem('selectedHabit', selectedHabit.id)
+    }
+  }, [selectedHabit])
+
+  useEffect(() => {
+    localStorage.setItem('habitProgress', JSON.stringify(progress))
+  }, [progress])
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme)
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+  }, [theme])
+
+  const handleHabitSelect = (habit: Habit) => {
+    setSelectedHabit(habit)
+  }
+
+  const handleProgressUpdate = (date: string, completed: boolean) => {
+    if (selectedHabit) {
+      setProgress(prev => ({
+        ...prev,
+        [selectedHabit.id]: {
+          ...prev[selectedHabit.id],
+          [date]: completed,
+        },
+      }))
+    }
+  }
+
+  const handleAddCustomHabit = (newHabit: Habit) => {
+    setHabits(prevHabits => [...prevHabits, newHabit])
+  }
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+      <Background selectedHabit={selectedHabit} />
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold">Daily Habit Tracker</h1>
+          <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <AnimatePresence mode="wait">
+          {!selectedHabit ? (
+            <motion.div
+              key="selection"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <HabitSelection habits={habits} onSelect={handleHabitSelect} />
+              <CustomHabitInput onAddHabit={handleAddCustomHabit} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="tracking"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <HabitTracking
+                habit={selectedHabit}
+                progress={progress[selectedHabit.id] || {}}
+                onProgressUpdate={handleProgressUpdate}
+                onReset={() => setSelectedHabit(null)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
-  );
+  )
 }
