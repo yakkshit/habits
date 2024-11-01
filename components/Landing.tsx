@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Moon, Sun, CheckCircle } from 'lucide-react'
@@ -7,11 +5,18 @@ import router, { Router, useRouter } from 'next/router'
 import Link from 'next/link'
 
 
-export default function Home() {
+export default function LandingPage() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
+  const [showGetStarted, setShowGetStarted] = useState(false)
   const { scrollYProgress } = useScroll()
   const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0.8])
   const scale = useTransform(scrollYProgress, [0, 0.3], [1, 0.9])
+
+    if (showGetStarted) {
+      return (
+        router.push('/habits')
+      )
+    }
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'dark'
@@ -55,15 +60,14 @@ export default function Home() {
             >
               Build lasting habits and achieve your goals with our intuitive habit tracking app.
             </motion.p>
-            <Link href='/habits'>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => setShowGetStarted(true)}
               className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full text-lg transition-colors duration-200"
             >
               Get Started
             </motion.button>
-            </Link>
           </div>
         </section>
 
