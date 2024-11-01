@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Background from '@/components/backgrouns';
 import ThemeToggle from '@/components/themetoggle';
 import HabitSelection from '@/components/habitselection';
 import CustomHabitInput from '@/components/customhabits';
@@ -89,7 +88,7 @@ export default function Habits() {
     <div className="min-h-screen relative overflow-hidden">
       <AnimatedGradientBackground /> {/* Place the animated background here */}
       <div className="text-gray-900 dark:text-gray-100 transition-colors duration-300 relative z-10">
-        <Background selectedHabit={selectedHabit} />
+        {/* <Background selectedHabit={selectedHabit} /> */}
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-between items-center mb-8">
             <Link href='/'>
