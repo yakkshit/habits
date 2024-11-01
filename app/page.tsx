@@ -7,6 +7,7 @@ import ThemeToggle from '@/components/themetoggle';
 import HabitSelection from '@/components/habitselection';
 import CustomHabitInput from '@/components/customhabits';
 import HabitTracking from '@/components/habittrack';
+import Link from 'next/link';
 
 interface Habit {
   id: string;
@@ -88,7 +89,9 @@ export default function Home() {
       <Background selectedHabit={selectedHabit} />
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">Daily Habit Tracker</h1>
+          <Link href='/'>
+            <h1 className="text-4xl font-bold">Daily Habit Tracker</h1>
+          </Link>
           <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
         </div>
         <AnimatePresence mode="wait">
