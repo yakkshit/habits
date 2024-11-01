@@ -1,23 +1,16 @@
 "use client"
 
-import { useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { Moon, Sun, CheckCircle } from 'lucide-react'
-import router, { Router, useRouter } from 'next/router'
+import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 
 export default function Home() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
   const { scrollYProgress } = useScroll()
   const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0.8])
   const scale = useTransform(scrollYProgress, [0, 0.3], [1, 0.9])
 
-  useEffect(() => {
-    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'dark'
-    setTheme(storedTheme)
-    document.documentElement.classList.toggle('dark', storedTheme === 'dark')
-  }, [])
 
   const features = [
     { icon: '🎯', title: 'Set Goals', description: 'Define and track your daily habits' },
@@ -28,7 +21,7 @@ export default function Home() {
 
   const testimonials = [
     { name: 'Sarah K.', text: 'This app has completely transformed my daily routine!' },
-    { name: 'Mike R.', text: "I've never been so consistent with my habits. Highly recommended!" },
+    { name: 'Mike R.', text: 'I`ve never been so consistent with my habits. Highly recommended!' },
     { name: 'Emily L.', text: 'The interface is intuitive and the animations make it fun to use.' },
   ]
 
@@ -99,8 +92,10 @@ export default function Home() {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5 }}
               >
-                <img
-                  src="/vercel.svg?height=400&width=400"
+                <Image
+                  src="/vercel.svg"
+                  height={400}
+                  width={400}
                   alt="Habit tracking illustration"
                   className="rounded-lg shadow-md"
                 />
@@ -141,7 +136,7 @@ export default function Home() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md"
                 >
-                  <p className="mb-4 italic">"{testimonial.text}"</p>
+                  <p className="mb-4 italic">&quot;{testimonial.text}&quot;</p>
                   {/* <p className="font-semibold">- {testimonial.name}</p> */}
                 </motion.div>
               ))}

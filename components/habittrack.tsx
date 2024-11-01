@@ -29,7 +29,7 @@ const motivationalQuotes = [
   "You chose to show up today—let's celebrate that!"
 ]
 
-const ConfettiButton = ({ children, onClick }: { children: React.ReactNode, onClick: () => void }) => {
+const ConfettiButton = ({ children, onClick, isCompleted }: { children: React.ReactNode, onClick: () => void, isCompleted: boolean }) => {
   const handleClick = () => {
     confetti({
       particleCount: 100,
@@ -42,7 +42,7 @@ const ConfettiButton = ({ children, onClick }: { children: React.ReactNode, onCl
   return (
     <Button 
       onClick={handleClick}
-      className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition-all duration-300 transform hover:scale-105"
+      className={`font-bold py-2 px-4 rounded-full transition-all duration-300 transform hover:scale-105 ${isCompleted ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-gray-500 hover:bg-gray-600 text-white'}`}
     >
       {children}
     </Button>
@@ -88,7 +88,7 @@ export default function HabitTracking({
         animate={{ scale: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <ConfettiButton onClick={handleToggle}>
+        <ConfettiButton onClick={handleToggle} isCompleted={progress[currentDate]}>
           {progress[currentDate] ? 'Completed 🎉' : 'Mark as Complete'}
         </ConfettiButton>
       </motion.div>

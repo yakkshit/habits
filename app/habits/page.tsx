@@ -8,6 +8,7 @@ import HabitSelection from '@/components/habitselection';
 import CustomHabitInput from '@/components/customhabits';
 import HabitTracking from '@/components/habittrack';
 import Link from 'next/link';
+import AnimatedGradientBackground from '@/components/gradient-bg'; // Import the animated background
 
 interface Habit {
   id: string;
@@ -85,44 +86,47 @@ export default function Habits() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      <Background selectedHabit={selectedHabit} />
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <Link href='/'>
-            <h1 className="text-4xl font-bold">Daily Habit Tracker</h1>
-          </Link>
-          <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+    <div className="min-h-screen relative overflow-hidden">
+      <AnimatedGradientBackground /> {/* Place the animated background here */}
+      <div className="text-gray-900 dark:text-gray-100 transition-colors duration-300 relative z-10">
+        <Background selectedHabit={selectedHabit} />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-between items-center mb-8">
+            <Link href='/'>
+              <h1 className="dark:text-black text-4xl font-bold">Daily Habit Tracker</h1>
+            </Link>
+            <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+          </div>
+          <AnimatePresence mode="wait">
+            {!selectedHabit ? (
+              <motion.div
+                key="selection"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <HabitSelection habits={habits} onSelect={handleHabitSelect} />
+                <CustomHabitInput onAddHabit={handleAddCustomHabit} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="tracking"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <HabitTracking
+                  habit={selectedHabit}
+                  progress={progress[selectedHabit.id] || {}}
+                  onProgressUpdate={handleProgressUpdate}
+                  onReset={() => setSelectedHabit(null)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-        <AnimatePresence mode="wait">
-          {!selectedHabit ? (
-            <motion.div
-              key="selection"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <HabitSelection habits={habits} onSelect={handleHabitSelect} />
-              <CustomHabitInput onAddHabit={handleAddCustomHabit} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="tracking"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <HabitTracking
-                habit={selectedHabit}
-                progress={progress[selectedHabit.id] || {}}
-                onProgressUpdate={handleProgressUpdate}
-                onReset={() => setSelectedHabit(null)}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   )

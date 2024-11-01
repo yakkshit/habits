@@ -13,7 +13,7 @@ interface BackgroundProps {
 export default function Background({ selectedHabit }: BackgroundProps) {
   return (
     <motion.div
-      className="fixed inset-0 -z-10"
+      className="fixed inset-0 -z-10 border-white dark:border-black"
       animate={{
         backgroundColor: selectedHabit 
           ? selectedHabit.color.startsWith('bg-[') 
